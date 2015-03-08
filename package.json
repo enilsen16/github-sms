@@ -1,0 +1,32 @@
+{
+  "name": "github-sms",
+  "version": "0.0.1",
+  "description": "github release sms notifications ",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "mocha test/*test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enilsen16/github-sms.git"
+  },
+  "keywords": [
+    "github",
+    "sms",
+    "release"
+  ],
+  "author": "Erik Nilsen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/enilsen16/github-sms/issues"
+  },
+  "homepage": "https://github.com/enilsen16/github-sms",
+  "dependencies": {
+    "twilio": "^1.11.1"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  }
+}
