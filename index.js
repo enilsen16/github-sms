@@ -1,21 +1,30 @@
 var https = require('https'),
-    redis = require('redis'),
-    clc = require('cli-color'),
-    twilio = require('./lib/twilio'),
-    client = redis.createClient();
+clc = require('cli-color'),
+twilio = require('./lib/twilio'),
+redis;
 
-client.on('connect', function() {
+var port = process.env.PORT || 5000;
+
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  redis = require("redis").createClient(rtg.port, rtg.hostname);
+  redis.auth(rtg.auth.split(":")[1]);
+} else {
+  redis = require('redis').createClient();
+}
+
+redis.on('connect', function() {
   console.log('connected');
 });
 
 var storeInRedis = function(key, value) {
-  return client.set(key, value, function(err, reply) {
+  return redis.set(key, value, function(err, reply) {
     console.log(reply);
   });
 };
 
 var getFromRedis = function(key, callback) {
-  client.get(key, function(err, reply) {
+  redis.get(key, function(err, reply) {
     callback(reply);
   });
 };
@@ -37,7 +46,7 @@ setInterval(function() {
         try {
           var profile = JSON.parse(body);
           console.log(clc.cyanBright("The current stable version of io.js is " + profile.stable +
-            "\n" + "The current unstable version of io.js is " + profile.unstable));
+          "\n" + "The current unstable version of io.js is " + profile.unstable));
           checkForNewVersion(profile.stable, profile.unstable);
         } catch(error) {
           console.error(error);

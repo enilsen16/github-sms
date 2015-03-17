@@ -22,6 +22,8 @@
   "dependencies": {
     "cli-color": "^0.3.2",
     "dotenv": "^0.5.1",
+    "express": "^4.12.3",
+    "redis": "^0.12.1",
     "twilio": "^1.11.1"
   }
 }
