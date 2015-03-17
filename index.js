@@ -1,5 +1,6 @@
 var https = require('https'),
     redis = require('redis'),
+    clc = require('cli-color'),
     twilio = require('./lib/twilio'),
     client = redis.createClient();
 
@@ -35,8 +36,8 @@ setInterval(function() {
       if(res.statusCode === 200) {
         try {
           var profile = JSON.parse(body);
-          console.log("The current stable version of io.js is " + profile.stable +
-            "\n" + "The current unstable version of io.js is " + profile.unstable);
+          console.log(clc.cyanBright("The current stable version of io.js is " + profile.stable +
+            "\n" + "The current unstable version of io.js is " + profile.unstable));
           checkForNewVersion(profile.stable, profile.unstable);
         } catch(error) {
           console.error(error);
@@ -56,14 +57,14 @@ setInterval(function() {
 function checkForNewVersion(stable, unstable) {
   getFromRedis('iojs-stable', function(reply) {
     if (stable !== reply) {
-      console.log("There is a new stable version of io.js!");
+      console.log(clc.greenBright("There is a new stable version of io.js!"));
       storeInRedis('iojs-stable', stable);
       twilio('stable', stable);
     }
   });
   getFromRedis('iojs-unstable', function(reply) {
     if (unstable !== reply) {
-      console.log("There is a new unstable version of io.js!");
+      console.log(clc.greenBright("There is a new unstable version of io.js!"));
       storeInRedis('iojs-unstable', unstable);
       twilio('unstable', unstable);
     }
