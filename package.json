@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/enilsen16/github-sms.git"
   },
+  "engine": "iojs >= 1.6.0",
   "keywords": [
     "github",
     "sms",
