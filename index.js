@@ -60,7 +60,6 @@ setInterval(function() {
 }, 5000);
 
 function checkForNewVersion(stable, unstable) {
-  console.log(stable, unstable);
   getFromRedis('iojs-stable', function(reply) {
     if (stable !== reply) {
       console.log(clc.greenBright("There is a new stable version of io.js!"));
