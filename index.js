@@ -1,4 +1,4 @@
-var https = require('https'),
+var http = require('http'),
 clc = require('cli-color'),
 twilio = require('./lib/twilio'),
 redis;
@@ -31,12 +31,13 @@ var getFromRedis = function(key, callback) {
 
 setInterval(function() {
   var options = {
-    hostname: 'semver.io',
-    path: '/iojs.json',
+    hostname: '127.0.0.1',
+    path: '/endpoint.json',
     method: 'GET',
+    port: 8000,
   };
 
-  var req = https.request(options, function(res) {
+  var req = http.request(options, function(res) {
     var body = '';
     res.on('data', function(d) {
       body += d;
@@ -45,8 +46,6 @@ setInterval(function() {
       if(res.statusCode === 200) {
         try {
           var profile = JSON.parse(body);
-          console.log(clc.cyanBright("The current stable version of io.js is " + profile.stable +
-          "\n" + "The current unstable version of io.js is " + profile.unstable));
           checkForNewVersion(profile.stable, profile.unstable);
         } catch(error) {
           console.error(error);
@@ -64,6 +63,7 @@ setInterval(function() {
 }, 5000);
 
 function checkForNewVersion(stable, unstable) {
+  console.log(stable, unstable);
   getFromRedis('iojs-stable', function(reply) {
     if (stable !== reply) {
       console.log(clc.greenBright("There is a new stable version of io.js!"));
