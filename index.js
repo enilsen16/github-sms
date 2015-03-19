@@ -3,8 +3,6 @@ clc = require('cli-color'),
 twilio = require('./lib/twilio'),
 redis;
 
-var port = process.env.PORT || 5000;
-
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
   redis = require("redis").createClient(rtg.port, rtg.hostname);
@@ -31,10 +29,9 @@ var getFromRedis = function(key, callback) {
 
 setInterval(function() {
   var options = {
-    hostname: '127.0.0.1',
-    path: '/endpoint.json',
+    hostname: 'semver.io',
+    path: '/iojs.json',
     method: 'GET',
-    port: 8000,
   };
 
   var req = http.request(options, function(res) {
