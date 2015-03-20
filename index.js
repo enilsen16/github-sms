@@ -1,5 +1,4 @@
-var http = require('http'),
-clc = require('cli-color'),
+var https = require('https'),
 twilio = require('./lib/twilio'),
 redis;
 
@@ -34,7 +33,7 @@ setInterval(function() {
     method: 'GET',
   };
 
-  var req = http.request(options, function(res) {
+  var req = https.request(options, function(res) {
     var body = '';
     res.on('data', function(d) {
       body += d;
@@ -62,14 +61,14 @@ setInterval(function() {
 function checkForNewVersion(stable, unstable) {
   getFromRedis('iojs-stable', function(reply) {
     if (stable !== reply) {
-      console.log(clc.greenBright("There is a new stable version of io.js!"));
+      console.log("There is a new stable version of io.js!");
       storeInRedis('iojs-stable', stable);
       twilio('stable', stable);
     }
   });
   getFromRedis('iojs-unstable', function(reply) {
     if (unstable !== reply) {
-      console.log(clc.greenBright("There is a new unstable version of io.js!"));
+      console.log("There is a new unstable version of io.js!");
       storeInRedis('iojs-unstable', unstable);
       twilio('unstable', unstable);
     }
