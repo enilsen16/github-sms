@@ -1,14 +1,7 @@
-var http = require('http');
-var semver = require('semver');
+var https = require('https');
 var twilio = require('./lib/twilio');
-var redis, timeout;
-
-repos = ['iojs', 'node'];
-
-paths = {
-  node: 'http://semver.io/node.json',
-  iojs: 'http://semver.io/iojs.json'
-};
+var _ = require('lodash');
+var timeout, redis;
 
 if (process.env.REDISTOGO_URL) {
   rtg = require('url').parse(process.env.REDISTOGO_URL);
@@ -38,12 +31,31 @@ getFromRedis = function(key) {
   });
 };
 
+repos = ['joyent', 'rails', 'iojs', 'atom'];
+
+paths = {
+  joyent: 'node',
+  iojs: 'io.js',
+  rails: 'rails',
+  atom: 'atom'
+};
+
 var query = function() {
   for (var i = 0; i < repos.length; i++) {
     repo = repos[i];
     path = paths[repo];
-    (function(repo) {
-      var req = http.request(path, function(res) {
+
+    var options = {
+      hostname: 'api.github.com',
+      method: 'GET',
+      headers: {
+        'user-agent': 'enilsen16'
+      }
+    };
+
+    options.path = '/repos/' + repo + '/' + path + '/tags';
+    (function(path) {
+      var req = https.request(options, function(res) {
         var body = '';
         res.on('data', function(d) {
           body += d;
@@ -52,7 +64,11 @@ var query = function() {
           if(res.statusCode === 200) {
             try {
               var profile = JSON.parse(body);
-              compare(repo, profile.all);
+              var arr = [];
+              for (var k = 0; k < profile.length; k++) {
+                arr.push((profile[k].name));
+              }
+              compare(path, arr);
             } catch(error) {
               console.error(error);
             }
@@ -62,16 +78,20 @@ var query = function() {
         });
       });
       req.end();
-    })(repo);
+    })(path);
   }
 };
 
 // Takes the repo and an array of versions
-var compare = function(repo, profile) {
+var compare = function(repo, array) {
   getFromRedis(repo).then(function(response) {
-    var latestVersion = profile[profile.length - 1];
-    if (response === null || semver.gt(latestVersion, response)) {
-      update(repo, latestVersion);
+    if (response === null) {
+      update(repo, array);
+    } else if (_.difference(array, JSON.parse(response)).length >= 1) {
+      var newVersion = _.difference(array, JSON.parse(response));
+      console.log("this is the new version:" + newVersion);
+      update(repo, array);
+      twilio(repo, newVersion);
     } else {
       clearTimeout(timeout);
       timeout = setTimeout(query, 5000);
@@ -80,9 +100,8 @@ var compare = function(repo, profile) {
 };
 
 var update = function(repo, value) {
-  storeInRedis(repo, value).then(function(reply) {
+  storeInRedis(repo, JSON.stringify(value)).then(function(reply) {
     console.log("New version of "+ repo +" updated!");
-    twilio(repo, value);
     clearTimeout(timeout);
     timeout = setTimeout(query, 5000);
   });
