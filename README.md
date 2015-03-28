@@ -3,5 +3,3 @@
 [![Gratipay for enilsen16](https://img.shields.io/gratipay/enilsen16.svg)](https://gratipay.com/enilsen16/)
 
 A notification service for popular github projects releases
-
-### Currently only supports io.js and Node
