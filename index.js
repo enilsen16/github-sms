@@ -95,7 +95,6 @@ var compare = function(repo, array) {
       update(repo, array);
       twilio(repo, newVersion);
     } else {
-      console.log("nothing changed");
       clearTimeout(timeout);
       timeout = setTimeout(query, 5000);
     }
