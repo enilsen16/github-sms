@@ -31,13 +31,13 @@ getFromRedis = function(key) {
   });
 };
 
-repos = ['joyent', 'rails', 'iojs', 'atom'];
+repos = ['joyent', 'iojs', 'atom', 'rails'];
 
 paths = {
   joyent: 'node',
   iojs: 'io.js',
-  rails: 'rails',
-  atom: 'atom'
+  atom: 'atom',
+  rails: 'rails'
 };
 
 var query = function() {
@@ -49,7 +49,8 @@ var query = function() {
       hostname: 'api.github.com',
       method: 'GET',
       headers: {
-        'user-agent': 'enilsen16'
+        'user-agent': 'enilsen16',
+        'Authorization': 'token ' + process.env.CLIENTID
       }
     };
 
@@ -73,6 +74,7 @@ var query = function() {
               console.error(error);
             }
           } else {
+            console.log(res.statusCode);
             console.error({message: "Error"});
           }
         });
@@ -85,14 +87,15 @@ var query = function() {
 // Takes the repo and an array of versions
 var compare = function(repo, array) {
   getFromRedis(repo).then(function(response) {
+    var newVersion = _.difference(array, JSON.parse(response));
     if (response === null) {
       update(repo, array);
-    } else if (_.difference(array, JSON.parse(response)).length >= 1) {
-      var newVersion = _.difference(array, JSON.parse(response));
+    } else if (newVersion.length >= 1) {
       console.log("this is the new version:" + newVersion);
       update(repo, array);
       twilio(repo, newVersion);
     } else {
+      console.log("nothing changed");
       clearTimeout(timeout);
       timeout = setTimeout(query, 5000);
     }
