@@ -96,7 +96,7 @@ var compare = function(repo, array) {
       twilio(repo, newVersion);
     } else {
       clearTimeout(timeout);
-      timeout = setTimeout(query, 5000);
+      timeout = setTimeout(query, 10000);
     }
   });
 };
@@ -105,7 +105,7 @@ var update = function(repo, value) {
   storeInRedis(repo, JSON.stringify(value)).then(function(reply) {
     console.log("New version of "+ repo +" updated!");
     clearTimeout(timeout);
-    timeout = setTimeout(query, 5000);
+    timeout = setTimeout(query, 10000);
   });
 };
 
