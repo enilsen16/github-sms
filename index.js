@@ -34,10 +34,10 @@ getFromRedis = function(key) {
 repos = ['elixir-lang', 'nodejs', 'atom', 'rails'];
 
 paths = {
-  atom:        'atom',
+  atom:          'atom',
   'elixir-lang': 'elixir',
-  nodejs:      'node',
-  rails:       'rails'
+  nodejs:        'node',
+  rails:         'rails'
 };
 
 var query = function() {
