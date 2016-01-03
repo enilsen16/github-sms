@@ -31,13 +31,13 @@ getFromRedis = function(key) {
   });
 };
 
-repos = ['joyent', 'iojs', 'atom', 'rails'];
+repos = ['elixir-lang', 'nodejs', 'atom', 'rails'];
 
 paths = {
-  joyent: 'node',
-  iojs: 'io.js',
-  atom: 'atom',
-  rails: 'rails'
+  atom:        'atom',
+  elixir-lang: 'elixir',
+  nodejs:      'node',
+  rails:       'rails'
 };
 
 var query = function() {
