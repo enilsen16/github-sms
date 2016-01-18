@@ -36,6 +36,7 @@ repos = ['elixir-lang', 'nodejs', 'atom', 'rails'];
 paths = {
   atom:          'atom',
   'elixir-lang': 'elixir',
+  'elm-lang':    'elm-compiler',
   nodejs:        'node',
   rails:         'rails'
 };
